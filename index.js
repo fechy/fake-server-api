@@ -66,6 +66,30 @@ app.post('/status', (request, response) => {
             .send(JSON.stringify(statusResponse));
 });
 
+app.get('*', (request, response) => {
+    console.log(request.headers, request.body);
+
+    const statusResponse = {
+        result: true
+    };
+
+    response.status(200)
+            .header("Content-Type", "application/json")
+            .send(JSON.stringify(statusResponse));
+});
+
+app.post('*', (request, response) => {
+    console.log(request.headers, request.body);
+
+    const statusResponse = {
+        result: true
+    };
+
+    response.status(200)
+            .header("Content-Type", "application/json")
+            .send(JSON.stringify(statusResponse));
+});
+
 http.createServer(app).listen(port, (err) => {
     if (err) {
         return console.log('something bad happened', err);
