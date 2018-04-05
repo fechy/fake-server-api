@@ -1,7 +1,20 @@
 const bodyParser = require('body-parser');
 const express = require('express');
+const http = require('http');
+const https = require('https');
+const fs = require('fs');
+
+const serverConfig = require('./.env.json');
+
+const options = {
+  key: serverConfig.ssl_key ? fs.readFileSync(serverConfig.ssl_key) : "",
+  cert: serverConfig.ssl_cert ? fs.readFileSync(serverConfig.ssl_cert) : ""
+};
+
 const app = express();
+
 const port = process.env.PORT || 8080; // If changed, it should also be changed in the server
+const sslPort = process.env.SSL_PORT || 8443; // If changed, it should also be changed in the server
 
 const MockServer = require('./mockServer');
 
@@ -53,9 +66,16 @@ app.post('/status', (request, response) => {
             .send(JSON.stringify(statusResponse));
 });
 
-app.listen(port, (err) => {
+http.createServer(app).listen(port, (err) => {
     if (err) {
         return console.log('something bad happened', err);
     }
     console.log(`server is listening on ${port}`);
+});
+
+https.createServer(options, app).listen(sslPort, (err) => {
+    if (err) {
+        return console.log('something bad happened', err);
+    }
+    console.log(`server is listening on ${sslPort}`);
 });
